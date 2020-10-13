@@ -1,0 +1,149 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Axes_Geometry.gd" type="Script" id=1]
+[ext_resource path="res://Fibonacci_spiral_3d.gd" type="Script" id=2]
+[ext_resource path="res://unit_disk.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://unit_circle_ShaderMaterial.tres" type="Material" id=4]
+[ext_resource path="res://orbit_camera.gd" type="Script" id=5]
+[ext_resource path="res://Fibonacci_spiral_3d_root.gd" type="Script" id=6]
+[ext_resource path="res://sky_texture_viewport_shader.shader" type="Shader" id=7]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_transparent = true
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = ExtResource( 7 )
+
+[sub_resource type="ViewportTexture" id=3]
+flags = 29
+viewport_path = NodePath("ViewportContainer/sky_texture_viewport")
+
+[sub_resource type="PanoramaSky" id=4]
+resource_local_to_scene = true
+panorama = SubResource( 3 )
+
+[sub_resource type="Environment" id=5]
+resource_local_to_scene = true
+background_mode = 2
+background_sky = SubResource( 4 )
+glow_enabled = true
+glow_levels/1 = true
+glow_levels/2 = true
+glow_intensity = 0.25
+glow_strength = 0.75
+glow_blend_mode = 0
+glow_hdr_scale = 4.0
+glow_bicubic_upscale = true
+adjustment_enabled = true
+adjustment_saturation = 1.1
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 6 )
+
+[node name="Tween" type="Tween" parent="."]
+repeat = true
+playback/repeat = true
+
+[node name="Axes" type="Spatial" parent="."]
+
+[node name="Axes_Geometry" type="ImmediateGeometry" parent="Axes"]
+material_override = SubResource( 1 )
+script = ExtResource( 1 )
+poles_brightness = 4.0
+x_col = Color( 0.992157, 0.447059, 0.447059, 0.12549 )
+y_col = Color( 0.368627, 1, 0.368627, 0.12549 )
+z_col = Color( 0.27451, 0.521569, 1, 0.12549 )
+poles_col = Color( 0, 0.156863, 1, 1 )
+
+[node name="orbit_camera" type="Spatial" parent="."]
+transform = Transform( 0.940478, 0, -0.339854, 0, 1, 0, 0.339854, 0, 0.940478, 0, 0, 0 )
+script = ExtResource( 5 )
+
+[node name="camera_zenith" type="Spatial" parent="orbit_camera"]
+transform = Transform( 1, 3.72529e-09, -2.98023e-08, 0, 0.993789, 0.111278, 0, -0.111278, 0.993789, 0, 0, 0 )
+
+[node name="Camera" type="Camera" parent="orbit_camera/camera_zenith"]
+transform = Transform( 1, -1.11759e-08, 2.98023e-08, 7.45058e-09, 1, 2.98023e-08, 0, -5.96046e-08, 1, 2.38419e-07, 5.96046e-08, 3.51462 )
+fov = 43.6
+
+[node name="Fibonacci_spiral_3d" type="MultiMeshInstance" parent="."]
+script = ExtResource( 2 )
+point_scale = 0.7
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+visible = false
+mesh = ExtResource( 3 )
+material/0 = ExtResource( 4 )
+
+[node name="ViewportContainer" type="ViewportContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 0.735092
+margin_top = -167.601
+margin_right = -767.265
+margin_bottom = -639.601
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="sky_texture_viewport" type="Viewport" parent="ViewportContainer"]
+size = Vector2( 256, 128 )
+handle_input_locally = false
+hdr = false
+disable_3d = true
+keep_3d_linear = true
+usage = 0
+render_target_update_mode = 3
+
+[node name="ColorRect" type="ColorRect" parent="ViewportContainer/sky_texture_viewport"]
+material = SubResource( 2 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 5 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+margin_bottom = 31.0
+size_flags_horizontal = 2
+size_flags_vertical = 2
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="fps_label" type="Label" parent="HBoxContainer"]
+margin_left = 369.0
+margin_top = 8.0
+margin_right = 388.0
+margin_bottom = 22.0
+custom_colors/font_color = Color( 1, 1, 1, 0.376471 )
+text = "fps"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="switch_to_2d_button" type="Button" parent="HBoxContainer"]
+margin_left = 392.0
+margin_right = 482.0
+margin_bottom = 31.0
+text = "switch to 2d"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="help" type="Label" parent="HBoxContainer"]
+margin_left = 486.0
+margin_right = 655.0
+margin_bottom = 31.0
+custom_colors/font_color = Color( 1, 1, 1, 0.462745 )
+text = "use the middle mouse
+button to orbit the camera"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="tween_completed" from="Tween" to="." method="_on_Tween_tween_completed"]
+[connection signal="pressed" from="HBoxContainer/switch_to_2d_button" to="." method="_on_switch_to_2d_button_pressed"]

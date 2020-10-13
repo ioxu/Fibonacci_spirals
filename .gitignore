@@ -1,0 +1,6 @@
+export/
+setup/
+
+# blobs of imported data
+.import/
+

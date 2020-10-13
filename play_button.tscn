@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://play-button-circle.png" type="Texture" id=1]
+[ext_resource path="res://styleboxempty.tres" type="StyleBox" id=2]
+[ext_resource path="res://play_button.gd" type="Script" id=3]
+
+[node name="play_button" type="Button"]
+modulate = Color( 1, 1, 1, 0.32549 )
+margin_right = 379.0
+margin_bottom = 374.0
+rect_scale = Vector2( 0.109141, 0.109141 )
+custom_styles/hover = ExtResource( 2 )
+custom_styles/pressed = ExtResource( 2 )
+custom_styles/focus = ExtResource( 2 )
+custom_styles/disabled = ExtResource( 2 )
+custom_styles/normal = ExtResource( 2 )
+toggle_mode = true
+icon = ExtResource( 1 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="toggled" from="." to="." method="_on_play_button_toggled"]
